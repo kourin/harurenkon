@@ -1,0 +1,1 @@
+Harurenkon is a GUI frontend of Natsurenkon that is derivative of Tsunderenko.
