@@ -8,12 +8,12 @@ include SimpleDialog
 #self_dropfiles(files)
 
  inmovie = SimpleDialog.select_file(title = "動画ファイル選択", filter = [])
- inmovie.each do |line|     # 一行ずつ読む処理にイテレータを利用
+ inmovie.each do |line|
  $movie = line
  end
  
  infile = SimpleDialog.select_file(title = "音声ファイル選択", filter = [])
- infile.each do |line|     # 一行ずつ読む処理にイテレータを利用
+ infile.each do |line|
  $audio = line
 end
 
@@ -43,9 +43,10 @@ class MyFiles < VRPanel
    #    @txt1.caption += $movie
 end
 
+#読み込みボタンを押して選択にしたいが、まだできない
 #  def btn2_clicked
 #    infile = SimpleDialog.select_file(title = "音声ファイル選択", filter = [])
-#    infile.each do |line|     # 一行ずつ読む処理にイテレータを利用
+#    infile.each do |line|
 #      $audio = line
 #    @txt2.caption += $audio
 #  end
@@ -92,6 +93,7 @@ module MyForm
      addControl(StartEnc,"cntl2","test", 10,270,800,50)
   end
 
+#esound と actypeはエンコード開始ボタンを押した時に値確定→設定ファイルに書き出し、としたいが、まだ動かない
    def cntl1_chk1_checked
     esound = if @cntl1_chk1.checked? then "true" else "false" end
    end
