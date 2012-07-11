@@ -18,11 +18,11 @@ class MyControl < VRPanel
     addControl(VRStatic,     "txt4","一般会員",  10,150, 500,20)
     addControl(VRRadiobutton,     "rdb2","バランス",  70,170, 200,20)
     addControl(VRRadiobutton,     "rdb3","音質重視",  70,190, 200,20)
-    addControl(VRStatic,     "txt5","エコノミー回避 （低画質になるが、常に同じ画質・音質。一般会員が混雑時間帯に試聴しても劣化なし）",  10,210, 700,20)
-    addControl(VRRadiobutton,     "rdb4","画質重視",  70,230, 800,20)
-    addControl(VRRadiobutton,     "rdb5","音質重視（主に画像1枚(+歌詞)の音楽動画向け）",  70,250, 800,20)
-    addControl(VRCheckbox,   "chk1","エンコ終了時、音で知らせる",    200,290, 750,20)
-    addControl(VRButton,     "btn101","エンコード開始",  200,330, 200,20)
+    addControl(VRStatic,     "txt5","エコノミー回避（低画質になるかもしれないが、常に同じ画質・音質。\n　　　　　　　　一般会員が混雑時間帯に試聴しても劣化しない）",  10,210, 700,40)
+    addControl(VRRadiobutton,     "rdb4","画質重視",  70,250, 800,20)
+    addControl(VRRadiobutton,     "rdb5","音質重視（主に画像1枚(+歌詞)の音楽動画向け）",  70,270, 800,20)
+    addControl(VRCheckbox,   "chk1","エンコ終了時、音で知らせる",    200,310, 750,20)
+    addControl(VRButton,     "btn101","エンコード開始",  200,350, 200,20)
     @rdb1.check true
     @chk1.check true
     send_parent("btn1",  "clicked")
@@ -42,7 +42,7 @@ module MyForm
   def construct
     self.caption="my control sample"
      addControl(VRStatic,     "txt0","春蓮根(ニコニコ動画用エンコード支援ツール)",  100,10, 550,20)
-     addControl(MyControl,"cntl1"," ", 10,30,800,370)
+     addControl(MyControl,"cntl1"," ", 10,30,800,390)
      addControl(VRStatic,     "txt1","動画：",  20,40,1200,20)
      addControl(VRStatic,     "txt2","音声：",  20,80,1200,20)
 
@@ -117,5 +117,5 @@ module MyForm
    end
 end
 
-VRLocalScreen.showForm(MyForm,100,100,800,450)
+VRLocalScreen.showForm(MyForm,100,100,800,470)
 VRLocalScreen.messageloop
