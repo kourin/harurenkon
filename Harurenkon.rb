@@ -18,7 +18,7 @@ class MyControl < VRPanel
     addControl(VRStatic,     "txt4","一般会員",  10,150, 500,20)
     addControl(VRRadiobutton,     "rdb2","バランス",  70,170, 200,20)
     addControl(VRRadiobutton,     "rdb3","音質重視",  70,190, 200,20)
-    addControl(VRStatic,     "txt5","エコノミー回避 （常に同じ画質・音質で再生できるが低画質）",  10,210, 500,20)
+    addControl(VRStatic,     "txt5","エコノミー回避 （一般会員が混雑時間帯に試聴しても、画質・音質劣化しないが低画質）",  10,210, 700,20)
     addControl(VRRadiobutton,     "rdb4","画質重視",  70,230, 800,20)
     addControl(VRRadiobutton,     "rdb5","音質重視（主に画像1枚(+歌詞)の音楽動画向け）",  70,250, 800,20)
     addControl(VRCheckbox,   "chk1","エンコ終了時、音で知らせる",    200,290, 750,20)
