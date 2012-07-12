@@ -1,8 +1,46 @@
 #!ruby -Ks
 require 'vr/vruby'
 require 'vr/vrcontrol'
+#require 'open-uri'
+require 'net/http'
+require 'uri'
 require "vr/simple_dialog"
 include SimpleDialog
+
+
+def vercheck
+	url = URI.parse('http://kourindrug.sakura.ne.jp/files/tde/latest_version')
+	req = Net::HTTP::Get.new(url.path)
+	res = Net::HTTP.start(url.host, url.port) {|http|
+	http.request(req)
+	}
+	@latestver =  res.body
+
+	@verfile = "tool/version.bat"
+	@currentverfile = "tool/current_version"
+	open(@verfile) {|file|
+	@currentver0 = file.readlines[0]
+	}
+
+	@currentver1 = @currentver0.split(/\s*\=\s*/)
+	@currentver = @currentver1.pop
+		
+	unless @latestver == @currentver then
+	  @updateconfirm = msgbox("新しいバージョンが出ています。今、アップデードしますか？", "アップデード確認", :yesno)
+	  if @updateconfirm == :yes then
+	    exec('start tool\harurenkon.bat natsurenkonupdate')
+	    open( @currentverfile, "w"){|f| f.write(@latestver)}
+		exit()
+	  else 
+	    open( @currentverfile, "w"){|f| f.write(@latestver)}	  
+	  end 
+    end
+end
+
+vercheck
+
+#VRLocalScreen.showForm(MyForm,100,100,800,470)
+#VRLocalScreen.messageloop
 
 class MyControl < VRPanel
   include VRMessageParentRelayer
@@ -40,21 +78,25 @@ end
 module MyForm
   include SimpleDialog
   def construct
-    self.caption="my control sample"
-     addControl(VRStatic,     "txt0","春蓮根(ニコニコ動画用エンコード支援ツール)",  100,10, 550,20)
+    self.caption="春蓮根(夏蓮根簡易フロントエンド)"
+     addControl(VRStatic,     "txt0","夏蓮根(ニコニコ動画用エンコード支援ツール)",  100,10, 550,20)
      addControl(MyControl,"cntl1"," ", 10,30,800,390)
      addControl(VRStatic,     "txt1","動画：",  20,40,1200,20)
      addControl(VRStatic,     "txt2","音声：",  20,80,1200,20)
 
-     @file1 = "tool/HTEMP/haru_enc_setting1.txt"
-     @file2 = "tool/HTEMP/haru_enc_setting2.txt"
-     @file3 = "tool/HTEMP/haru_enc_start.bat"
+     @file1 = "tool/TEMP/HARU/haru_enc_setting1.txt"
+     @file2 = "tool/TEMP/HARU/haru_enc_setting2.txt"
+     @file3 = "tool/TEMP/HARU/haru_enc_start.bat"
+
+    unless File.exist?("tool/TEMP/HARU") then
+    `mkdir "tool/TEMP/HARU"`
+    end
   end
 
    def cntl1_btn1_clicked
        inmovie = SimpleDialog.select_file(title = "動画または画像ファイルを選択してください", filter = [])
        inmovie
-       if not inmovie == "nil" then
+       if not inmovie == nil then
           inmovie.each do |line|
           $movie = line
           @txt1.caption = "動画："+$movie
@@ -72,7 +114,6 @@ module MyForm
           end
        end
    end
-
 
    def cntl1_chk1_clicked
     if File.exist?(@file1) then 
@@ -106,14 +147,18 @@ module MyForm
    end
 
    def cntl1_btn101_clicked
-   $runfile = 'start tool\harurenkon.bat'
-   $runfile += " "+"\""+$movie+"\""
-   if not $audio == nil then
-     $runfile += " "+"\""+$audio+"\""
-   end
-   open( @file3 , "w"){|f| f.write($runfile)}
-   close
-   exec($runfile)
+	if not $movie == nil then
+		$runfile = 'start tool\harurenkon.bat'
+		$runfile += " "+"\""+$movie+"\""
+		if not $audio == nil then
+			$runfile += " "+"\""+$audio+"\""
+		end
+		open( @file3 , "w"){|f| f.write($runfile)}
+		close
+		exec($runfile)
+	else
+		puts msgbox("エンコードしたいファイルを選択してください", "ファイルを選択してください", :ok)
+	end
    end
 end
 
