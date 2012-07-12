@@ -1,30 +1,33 @@
 #!ruby -Ks
 require 'vr/vruby'
 require 'vr/vrcontrol'
-#require 'open-uri'
 require 'net/http'
-require 'uri'
 require "vr/simple_dialog"
 include SimpleDialog
 
-
 def vercheck
-	url = URI.parse('http://kourindrug.sakura.ne.jp/files/tde/latest_version')
-	req = Net::HTTP::Get.new(url.path)
-	res = Net::HTTP.start(url.host, url.port) {|http|
-	http.request(req)
-	}
-	@latestver =  res.body
-
 	@verfile = "tool/version.bat"
 	@currentverfile = "tool/current_version"
 	open(@verfile) {|file|
 	@currentver0 = file.readlines[0]
 	}
-
 	@currentver1 = @currentver0.split(/\s*\=\s*/)
 	@currentver2 = @currentver1.pop
 	$currentver = @currentver2.sub(/\n/, '')
+
+	begin
+		url = URI.parse('http://kourindrug.sakura.ne.jp/files/tde/latest_version')
+		req = Net::HTTP::Get.new(url.path)
+		res = Net::HTTP.start(url.host, url.port) {|http|
+		http.request(req)
+		}
+	rescue
+    	@latestver = $currentver
+	else
+		@latestver1 =  res.body
+    	@latestver = @latestver1.sub(/\n/, '')
+	end
+
 	unless @latestver == $currentver then
 	  @updateconfirm = msgbox("新しいバージョンが出ています。今、アップデードしますか？", "アップデード確認", :yesno)
 	  if @updateconfirm == :yes then
@@ -84,7 +87,7 @@ module MyForm
      @file1 = "tool/TEMP/HARU/haru_enc_setting1.txt"
      @file2 = "tool/TEMP/HARU/haru_enc_setting2.txt"
      @file3 = "tool/TEMP/HARU/haru_enc_start.bat"
-	 harutitle = "夏蓮根" + $currentver + "  (ニコニコ動画用エンコード支援ツール)"
+	 harutitle = "夏蓮根" + $currentver + "  (ニコニコ動画用エンコードツール「つんでれんこ」改造版)"
 	 @txt0.caption = harutitle
     unless File.exist?("tool/TEMP/HARU") then
     `mkdir "tool/TEMP/HARU"`
