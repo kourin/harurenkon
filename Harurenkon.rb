@@ -24,8 +24,10 @@ def vercheck
 
 	@currentver1 = @currentver0.split(/\s*\=\s*/)
 	@currentver = @currentver1.pop
-		
-	unless @latestver == @currentver then
+	$currentver2 = @currentver.sub(/\n/, '')
+
+	str = "Copyright 2001 by TAKEUCHI Hitoshi.".sub(/[A-Za-z]*right/, "Copyleft")
+	unless @latestver == $currentver then
 	  @updateconfirm = msgbox("新しいバージョンが出ています。今、アップデードしますか？", "アップデード確認", :yesno)
 	  if @updateconfirm == :yes then
 	    exec('start tool\harurenkon.bat natsurenkonupdate')
@@ -87,7 +89,8 @@ module MyForm
      @file1 = "tool/TEMP/HARU/haru_enc_setting1.txt"
      @file2 = "tool/TEMP/HARU/haru_enc_setting2.txt"
      @file3 = "tool/TEMP/HARU/haru_enc_start.bat"
-
+	 harutitle = "夏蓮根" + $currentver2 + "  (ニコニコ動画用エンコード支援ツール)"
+	 @txt0.caption = harutitle
     unless File.exist?("tool/TEMP/HARU") then
     `mkdir "tool/TEMP/HARU"`
     end
