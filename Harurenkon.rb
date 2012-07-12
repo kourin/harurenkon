@@ -23,9 +23,10 @@ def vercheck
 	}
 
 	@currentver1 = @currentver0.split(/\s*\=\s*/)
-	@currentver = @currentver1.pop
-	$currentver2 = @currentver.sub(/\n/, '')
-
+	@currentver2 = @currentver1.pop
+	$currentver = @currentver2.sub(/\n/, '')
+    p $currentver
+    p @latestver
 	str = "Copyright 2001 by TAKEUCHI Hitoshi.".sub(/[A-Za-z]*right/, "Copyleft")
 	unless @latestver == $currentver then
 	  @updateconfirm = msgbox("新しいバージョンが出ています。今、アップデードしますか？", "アップデード確認", :yesno)
@@ -89,7 +90,7 @@ module MyForm
      @file1 = "tool/TEMP/HARU/haru_enc_setting1.txt"
      @file2 = "tool/TEMP/HARU/haru_enc_setting2.txt"
      @file3 = "tool/TEMP/HARU/haru_enc_start.bat"
-	 harutitle = "夏蓮根" + $currentver2 + "  (ニコニコ動画用エンコード支援ツール)"
+	 harutitle = "夏蓮根" + $currentver + "  (ニコニコ動画用エンコード支援ツール)"
 	 @txt0.caption = harutitle
     unless File.exist?("tool/TEMP/HARU") then
     `mkdir "tool/TEMP/HARU"`
