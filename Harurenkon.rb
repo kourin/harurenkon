@@ -25,9 +25,6 @@ def vercheck
 	@currentver1 = @currentver0.split(/\s*\=\s*/)
 	@currentver2 = @currentver1.pop
 	$currentver = @currentver2.sub(/\n/, '')
-    p $currentver
-    p @latestver
-	str = "Copyright 2001 by TAKEUCHI Hitoshi.".sub(/[A-Za-z]*right/, "Copyleft")
 	unless @latestver == $currentver then
 	  @updateconfirm = msgbox("新しいバージョンが出ています。今、アップデードしますか？", "アップデード確認", :yesno)
 	  if @updateconfirm == :yes then
@@ -41,9 +38,6 @@ def vercheck
 end
 
 vercheck
-
-#VRLocalScreen.showForm(MyForm,100,100,800,470)
-#VRLocalScreen.messageloop
 
 class MyControl < VRPanel
   include VRMessageParentRelayer
