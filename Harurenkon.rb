@@ -52,15 +52,16 @@ class MyControl < VRPanel
     addControl(VRButton,     "btn1","動画または画像ファイルを選択",  10,30,500,20)
     addControl(VRButton,     "btn2","動画とは別の音声を使う場合は音声ファイルを選択",  10,70,500,20)
     addControl(VRStatic,     "txt3","プレミアム会員",  10,110, 500,20)
-    addControl(VRRadiobutton,     "rdb1","バランス",  70,130, 150,20)
-    addControl(VRStatic,     "txt4","一般会員",  10,150, 500,20)
-    addControl(VRRadiobutton,     "rdb2","バランス",  70,170, 200,20)
-    addControl(VRRadiobutton,     "rdb3","音質重視",  70,190, 200,20)
-    addControl(VRStatic,     "txt5","エコノミー回避（低画質になるかもしれないが、常に同じ画質・音質。\n　　　　　　　　一般会員が混雑時間帯に試聴しても劣化しない）",  10,210, 700,40)
-    addControl(VRRadiobutton,     "rdb4","画質重視",  70,250, 800,20)
-    addControl(VRRadiobutton,     "rdb5","音質重視（主に画像1枚(+歌詞)の音楽動画向け）",  70,270, 800,20)
-    addControl(VRCheckbox,   "chk1","エンコ終了時、音で知らせる",    200,310, 750,20)
-    addControl(VRButton,     "btn101","エンコード開始",  200,350, 200,20)
+    addControl(VRRadiobutton,     "rdb1","バランス（10分未満の場合は、画質を重視したい時もこちら）",  70,130, 500,20)
+    addControl(VRRadiobutton,     "rdb2","画質重視（10分を越える動画向け）",  70,150, 500,20)
+    addControl(VRStatic,     "txt4","一般会員",  10,170, 500,20)
+    addControl(VRRadiobutton,     "rdb3","バランス",  70,190, 200,20)
+    addControl(VRRadiobutton,     "rdb4","音質重視",  70,210, 200,20)
+    addControl(VRStatic,     "txt5","エコノミー回避（低画質になるかもしれないが、常に同じ画質・音質。\n　　　　　　　　一般会員が混雑時間帯に試聴しても劣化しない）",  10,230, 700,40)
+    addControl(VRRadiobutton,     "rdb5","画質重視",  70,270, 800,20)
+    addControl(VRRadiobutton,     "rdb6","音質重視（主に画像1枚(+歌詞)の音楽動画向け）",  70,290, 800,20)
+    addControl(VRCheckbox,   "chk1","エンコ終了時、音で知らせる",    200,330, 750,20)
+    addControl(VRButton,     "btn101","エンコード開始",  200,370, 200,20)
     @rdb1.check true
     @chk1.check true
     send_parent("btn1",  "clicked")
@@ -80,7 +81,7 @@ module MyForm
   def construct
     self.caption="春蓮根(夏蓮根簡易フロントエンド)"
      addControl(VRStatic,     "txt0","夏蓮根(ニコニコ動画用エンコード支援ツール)",  100,10, 550,20)
-     addControl(MyControl,"cntl1"," ", 10,30,800,390)
+     addControl(MyControl,"cntl1"," ", 10,30,800,410)
      addControl(VRStatic,     "txt1","動画：",  20,40,1200,20)
      addControl(VRStatic,     "txt2","音声：",  20,80,1200,20)
 
@@ -132,18 +133,22 @@ module MyForm
    end
 
    def cntl1_rdb2_clicked
-     open( @file2 , "w"){|f| f.write("normalmovie")}
+     open( @file2 , "w"){|f| f.write("premiummovie")}
    end
 
    def cntl1_rdb3_clicked
-     open( @file2 , "w"){|f| f.write("normalaudio")}
+     open( @file2 , "w"){|f| f.write("normalmovie")}
    end
 
    def cntl1_rdb4_clicked
-     open( @file2 , "w"){|f| f.write("economymovie")}
+     open( @file2 , "w"){|f| f.write("normalaudio")}
    end
 
    def cntl1_rdb5_clicked
+     open( @file2 , "w"){|f| f.write("economymovie")}
+   end
+
+   def cntl1_rdb6_clicked
      open( @file2 , "w"){|f| f.write("economyaudio")}
    end
 
@@ -163,5 +168,5 @@ module MyForm
    end
 end
 
-VRLocalScreen.showForm(MyForm,100,100,800,470)
+VRLocalScreen.showForm(MyForm,100,100,800,490)
 VRLocalScreen.messageloop
