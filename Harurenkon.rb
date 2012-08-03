@@ -15,6 +15,8 @@ def vercheck
 	@currentver2 = @currentver1.pop
 	$currentver = @currentver2.sub(/\n/, '')
 
+	@latestverfile = "tool/latest_version"
+
 	begin
 		url = URI.parse('http://kourindrug.sakura.ne.jp/files/tde/latest_version')
 		req = Net::HTTP::Get.new(url.path)
@@ -26,6 +28,7 @@ def vercheck
 	else
 		@latestver1 =  res.body
     	@latestver = @latestver1.sub(/\n/, '')
+	    open( @latestverfile, "w"){|f| f.write(@latestver)}
 	end
 
 	unless @latestver == $currentver then
@@ -52,8 +55,8 @@ class MyControl < VRPanel
     addControl(VRButton,     "btn1","動画または画像ファイルを選択",  10,30,500,20)
     addControl(VRButton,     "btn2","動画とは別の音声を使う場合は音声ファイルを選択",  10,70,500,20)
     addControl(VRStatic,     "txt3","プレミアム会員",  10,110, 500,20)
-    addControl(VRRadiobutton,     "rdb1","バランス（10分未満の場合は、画質を重視したい時もこちら）",  70,130, 500,20)
-    addControl(VRRadiobutton,     "rdb2","画質重視（10分を越える動画向け）",  70,150, 500,20)
+    addControl(VRRadiobutton,     "rdb1","バランス（9分未満の場合は、画質を重視したい時もこちらを推奨。）",  70,130, 550,20)
+    addControl(VRRadiobutton,     "rdb2","画質重視（9分を越える動画向け。）",  70,150, 500,20)
     addControl(VRStatic,     "txt4","一般会員",  10,170, 500,20)
     addControl(VRRadiobutton,     "rdb3","バランス",  70,190, 200,20)
     addControl(VRRadiobutton,     "rdb4","音質重視",  70,210, 200,20)
@@ -77,7 +80,6 @@ class MyControl < VRPanel
 end
 
 module MyForm
-  include SimpleDialog
   def construct
     self.caption="春蓮根(夏蓮根簡易フロントエンド)"
      addControl(VRStatic,     "txt0","夏蓮根(ニコニコ動画用エンコード支援ツール)",  100,10, 550,20)
@@ -101,8 +103,18 @@ module MyForm
        if not inmovie == nil then
           inmovie.each do |line|
           $movie = line
-          @txt1.caption = "動画："+$movie
           end
+       end
+       @txt1.caption = "動画："+$movie
+       @ext_name = File.extname( $movie )
+       if @ext_name == ".mswmm" then
+         puts msgbox("これはプロジェクトファイルです。\nWindowsムービーメーカーで「ムービーの発行」をしてwmvファイルにしてください", "プロジェクトファイル エラー", :ok)
+       elsif @ext_name == ".wlmp" then
+         puts msgbox("これはプロジェクトファイルです。\nWindows Liveムービーメーカーで「ムービーの保存」をしてwmvファイルにしてください", "プロジェクトファイル エラー", :ok)
+       elsif @ext_name == ".aup" then
+         puts msgbox("これはプロジェクトファイルです。\nAviUtlで「AVI出力」をしてaviファイルにしてください","プロジェクトファイル エラー",  :ok)
+       elsif @ext_name == ".vsp" then
+         puts msgbox("これはプロジェクトファイルです。\nVideoStudioで「ビデオファイルの作成」を選んで動画ファイルにしてください ","プロジェクトファイル エラー",  :ok)
        end
    end
 
