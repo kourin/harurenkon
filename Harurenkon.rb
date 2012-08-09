@@ -32,7 +32,21 @@ def vercheck
 	end
 
 	unless @latestver == $currentver then
-	  @updateconfirm = msgbox("新しいバージョンが出ています。今、アップデードしますか？", "アップデード確認", :yesno)
+		begin
+			url2 = URI.parse('http://dl.dropbox.com/u/9397178/ChangeLog')
+			req2 = Net::HTTP::Get.new(url2.path)
+			res2 = Net::HTTP.start(url2.host, url2.port) {|http|
+			http.request(req2)
+			}
+		rescue
+			@chagngelog = " "
+		else
+#			@chagngelog =  res2.body.gsub("\n","\r\n")
+			@chagngelog =  res2.body
+		end
+	
+	  @updatemassage = @chagngelog + "\r\n###########################\r\n\r\n新しいバージョンが出ています。今、アップデードしますか？"
+	  @updateconfirm = msgbox(@updatemassage, "アップデード確認", :yesno)
 	  if @updateconfirm == :yes then
 	    exec('start tool\harurenkon.bat natsurenkonupdate')
 	    open( @currentverfile, "w"){|f| f.write(@latestver)}
@@ -55,12 +69,12 @@ class MyControl < VRPanel
     addControl(VRButton,     "btn1","動画または画像ファイルを選択",  10,30,500,20)
     addControl(VRButton,     "btn2","動画とは別の音声を使う場合は音声ファイルを選択",  10,70,500,20)
     addControl(VRStatic,     "txt3","プレミアム会員",  10,110, 500,20)
-    addControl(VRRadiobutton,     "rdb1","バランス（9分未満の場合は、画質を重視したい時もこちらを推奨。）",  70,130, 550,20)
-    addControl(VRRadiobutton,     "rdb2","画質重視（9分を越える動画向け。）",  70,150, 500,20)
+    addControl(VRRadiobutton,     "rdb1","バランス（9分未満の場合は、画質を重視したい時もこちらを推奨）",  70,130, 550,20)
+    addControl(VRRadiobutton,     "rdb2","画質重視（9分を越える動画向け）",  70,150, 500,20)
     addControl(VRStatic,     "txt4","一般会員",  10,170, 500,20)
     addControl(VRRadiobutton,     "rdb3","バランス",  70,190, 200,20)
     addControl(VRRadiobutton,     "rdb4","音質重視",  70,210, 200,20)
-    addControl(VRStatic,     "txt5","エコノミー回避（低画質になるかもしれないが、常に同じ画質・音質。\n　　　　　　　　一般会員が混雑時間帯に試聴しても劣化しない）",  10,230, 700,40)
+    addControl(VRStatic,     "txt5","エコノミー回避（低画質になるかもしれないが、常に同じ画質・音質\n　　　　　　　　一般会員が混雑時間帯に試聴しても劣化しない）",  10,230, 700,40)
     addControl(VRRadiobutton,     "rdb5","画質重視",  70,270, 800,20)
     addControl(VRRadiobutton,     "rdb6","音質重視（主に画像1枚(+歌詞)の音楽動画向け）",  70,290, 800,20)
     addControl(VRCheckbox,   "chk1","エンコ終了時、音で知らせる",    200,330, 750,20)
@@ -99,23 +113,26 @@ module MyForm
 
    def cntl1_btn1_clicked
        inmovie = SimpleDialog.select_file(title = "動画または画像ファイルを選択してください", filter = [])
-       inmovie
        if not inmovie == nil then
           inmovie.each do |line|
           $movie = line
+	      @txt1.caption = "動画："+$movie
           end
        end
-       @txt1.caption = "動画："+$movie
-       @ext_name = File.extname( $movie )
-       if @ext_name == ".mswmm" then
-         puts msgbox("これはプロジェクトファイルです。\nWindowsムービーメーカーで「ムービーの発行」をしてwmvファイルにしてください", "プロジェクトファイル エラー", :ok)
-       elsif @ext_name == ".wlmp" then
-         puts msgbox("これはプロジェクトファイルです。\nWindows Liveムービーメーカーで「ムービーの保存」をしてwmvファイルにしてください", "プロジェクトファイル エラー", :ok)
-       elsif @ext_name == ".aup" then
-         puts msgbox("これはプロジェクトファイルです。\nAviUtlで「AVI出力」をしてaviファイルにしてください","プロジェクトファイル エラー",  :ok)
-       elsif @ext_name == ".vsp" then
-         puts msgbox("これはプロジェクトファイルです。\nVideoStudioで「ビデオファイルの作成」を選んで動画ファイルにしてください ","プロジェクトファイル エラー",  :ok)
-       end
+	   begin 
+       ext_name = File.extname( $movie )
+	   rescue
+	   else
+	       if ext_name == ".mswmm" then
+	         puts msgbox("これはプロジェクトファイルです。\nWindowsムービーメーカーで「ムービーの発行」をしてwmvファイルにしてください", "プロジェクトファイル エラー", :ok)
+	       elsif ext_name == ".wlmp" then
+		     puts msgbox("これはプロジェクトファイルです。\nWindows Liveムービーメーカーで「ムービーの保存」をしてwmvファイルにしてください", "プロジェクトファイル エラー", :ok)
+	       elsif ext_name == ".aup" then
+	         puts msgbox("これはプロジェクトファイルです。\nAviUtlで	「AVI出力」をしてaviファイルにしてください","プロジェクトファイル エラー",  :ok)
+	       elsif ext_name == ".vsp" then
+	         puts msgbox("これはプロジェクトファイルです。\nVideoStudioで「ビデオファイルの作成」を選んで動画ファイルにしてください ","プロジェクトファイル エラー",  :ok)
+	       end
+	   end
    end
 
    def cntl1_btn2_clicked
