@@ -9,16 +9,14 @@ require 'vr/vrolednd'
 require 'vr/vrhandler'
 include SimpleDialog
 
-if defined? ExerbRuntime
-  basedir =  File.dirname(ExerbRuntime.filepath)
-end
+basedir = Dir.getwd
 
 def filelistmake
   unless ARGV[0] == nil then
     if File.directory?(ARGV[0]) == false then
         while line = ARGF.gets
           movie1=ARGF.path
-        if /(wav|mp3)$/i =~ movie1 then 
+        if /(wav|mp3|m4a|aac)$/i =~ movie1 then 
             $audio = "\""+ movie1 + "\""
         elsif
            begin
@@ -53,14 +51,14 @@ class DropPanel < VRPanel
     1.upto(files.size-1) do |i|
     print files[i]
         if /(wav|mp3)$/i =~ files[i] then 
-            $audio = "\""+ movie1 + "\""
-        elsif
+            $audio = "\""+ files[i] + "\""
+        else
            begin
              unless files[i] == nil then
               $movie = $movie + " " + "\""+ files[i] + "\""
              end
            rescue
-             $movie = "\""+ files[i] + "\""
+              $movie = "\""+ files[i] + "\""
            else
            end
         end 
@@ -100,7 +98,7 @@ def vercheck
 
 	unless @latestver == $currentver then
 		begin
-			url2 = URI.parse('http://dl.dropbox.com/u/9397178/ChangeLog')
+			url2 = URI.parse('http://kourindrug.sakura.ne.jp/files/tde/ChangeLog')
 			req2 = Net::HTTP::Get.new(url2.path)
 			res2 = Net::HTTP.start(url2.host, url2.port) {|http|
 			http.request(req2)
@@ -108,7 +106,6 @@ def vercheck
 		rescue
 			@chagngelog = " "
 		else
-#			@chagngelog =  res2.body.gsub("\n","\r\n")
 			@chagngelog =  res2.body
 		end
 	
@@ -136,30 +133,9 @@ class MyControl < VRPanel
     c = $audio
     addControl(VRButton,     "btn1","動画または画像ファイルを選択",  10,30,500,20)
     addControl(VRButton,     "btn2","動画とは別の音声を使う場合は音声ファイルを選択",  10,70,500,20)
-    addControl(VRStatic,     "txt7","※複数ファイルの連続エンコおよび連番aviの連結はタイトルバーへファイルまたはフォルダをドロップ",  10,90, 900,20)
-    addControl(VRStatic,     "txt6","簡易設定",  200,130, 120,20)
-    addControl(VRStatic,     "txt3","プレミアム会員",  10,150, 500,20)
-    addControl(VRRadiobutton,     "rdb1","バランス（9分未満の場合は、画質を重視したい時もこちらを推奨）",  70,170, 550,20)
-    addControl(VRRadiobutton,     "rdb2","画質重視（9分を越える動画向け）",  70,190, 500,20)
-    addControl(VRStatic,     "txt4","一般会員",  10,210, 500,20)
-    addControl(VRRadiobutton,     "rdb3","バランス",  70,230, 200,20)
-    addControl(VRRadiobutton,     "rdb4","音質重視",  70,250, 200,20)
-    addControl(VRStatic,     "txt5","エコノミー回避（低画質になるかもしれないが、常に同じ画質・音質\n　　　　　　　　一般会員が混雑時間帯に試聴しても劣化しない）",  10,270, 700,40)
-    addControl(VRRadiobutton,     "rdb5","画質重視",  70,310, 800,20)
-    addControl(VRRadiobutton,     "rdb6","音質重視（主に画像1枚(+歌詞)の音楽動画向け）",  70,330, 800,20)
-    addControl(VRCheckbox,   "chk1","エンコ終了時、音で知らせる",    200,370, 300,20)
-    addControl(VRButton,     "btn101","エンコード開始",  200,410, 200,20)
-    @rdb1.check true
-    @chk1.check true
+    addControl(VRStatic,     "txt7","※複数ファイルの連続エンコおよび連番aviの連結はこのウィンドウにファイルまたはフォルダをドロップ",  10,90, 900,20)
     send_parent("btn1",  "clicked")
     send_parent("btn2",  "clicked")
-    send_parent("rdb1",  "clicked")
-    send_parent("rdb2",  "clicked")
-    send_parent("rdb3",  "clicked")
-    send_parent("rdb4",  "clicked")
-    send_parent("rdb5",  "clicked")
-    send_parent("chk1",  "clicked")
-    send_parent("btn101",  "clicked")
    end
 end
 
@@ -168,9 +144,26 @@ module MyForm
   def construct
     self.caption="春蓮根(夏蓮根簡易フロントエンド)    ※※※ファイルまたはフォルダをドロップする場合はこのタイトルバーへ※※※"
      addControl(VRStatic,     "txt0","夏蓮根(ニコニコ動画用エンコード支援ツール)",  100,10, 550,20)
-     addControl(MyControl,"cntl1"," ", 10,30,800,430)
+     addControl(MyControl,"cntl1"," ", 10,30,800,110)
      addControl(VRStatic,     "txt1","動画：",  20,40,1200,20)
      addControl(VRStatic,     "txt2","音声：",  20,80,1200,20)
+     addControl(VRStatic,     "txt3","簡易設定",  210,160, 120,20)
+     addControl(VRStatic,     "txt4","プレミアム会員",  20,180, 500,20)
+     addControl(VRRadiobutton,     "rdb1","バランス（9分未満の場合は、画質を重視したい時もこちらを推奨）",  80,200, 550,20)
+     addControl(VRRadiobutton,     "rdb2","画質重視（9分を越える動画向け。または、バランスだと重すぎる場合用）",  80,220, 600,20)
+     addControl(VRStatic,     "txt5","一般会員",  20,240, 500,20)
+     addControl(VRRadiobutton,     "rdb3","バランス",  80,260, 200,20)
+     addControl(VRRadiobutton,     "rdb4","音質重視",  80,280, 200,20)
+     addControl(VRStatic,     "txt6","エコノミー回避（低画質になるかもしれないが、常に同じ画質・音質\n　　　　　　　　一般会員が混雑時間帯に試聴しても劣化しない）",  20,300, 700,40)
+     addControl(VRRadiobutton,     "rdb5","画質重視",  80,340, 800,20)
+     addControl(VRRadiobutton,     "rdb6","音質重視（主に画像1枚(+歌詞)の音楽動画向け）",  80,360, 800,20)
+     addControl(VRStatic,     "txt7","YouTube推奨設定(アップロード上限解除していない場合は15分まで)", 20,400, 700,20)
+     addControl(VRRadiobutton,     "rdb7","高画質・高音質にしたい時は、1280x720か1920x1080で作っておくこと",  80,420, 800,20)
+     addControl(VRStatic,     "txt8","1GB以下のmp4やwmv等は、エンコせずに直接投稿したほうが良いかも？",  100,440, 800,20)
+     addControl(VRCheckbox,   "chk1","ボイス再生とエンコ終了時のお知らせをオフにする",    150,480, 400,20)
+     addControl(VRButton,     "btn101","エンコード開始",  210,520, 200,20)
+     @rdb1.check true
+     @chk1.check false
      @file1 = "tool/TEMP/HARU/haru_enc_setting1.txt"
      @file2 = "tool/TEMP/HARU/haru_enc_setting2.txt"
      @file3 = "tool/TEMP/HARU/haru_enc_start.bat"
@@ -180,6 +173,7 @@ module MyForm
     `mkdir "tool/TEMP/HARU"`
     end
     
+    open( @file1, "w"){|f| f.write("true")}
     unless $movie == nil then 
       @txt1.caption = "動画：" + $movie
     end
@@ -190,17 +184,22 @@ module MyForm
 
   def textset(fname)
     a=fname
-    unless $movie == nil then
-      if /(wav|mp3)$/i =~ a then 
+    if $movie == nil then
+      if /(wav|mp3|m4a|aac)$/i =~ a then 
+        $audio = "\""+ a + "\""
+        @txt2.caption = "音声：" + $audio
+      else
+        $movie = "\"" + a + "\""
+	      @txt1.caption = "動画：" + $movie
+      end
+    else
+      if /(wav|mp3|m4a|aac)$/i =~ a then 
         $audio = "\""+ a + "\""
         @txt2.caption = "音声：" + $audio
       else
         $movie = $movie + " \"" + a + "\""
 	      @txt1.caption = "動画：" + $movie
       end
-    else
-        $movie = "\"" + a + "\""
-	      @txt1.caption = "動画：" + $movie
     end
   end
 
@@ -230,6 +229,10 @@ module MyForm
 	         puts msgbox("これはプロジェクトファイルです。\nAviUtlで	「AVI出力」をしてaviファイルにしてください","プロジェクトファイル エラー",  :ok)
 	       elsif ext_name == ".vsp" then
 	         puts msgbox("これはプロジェクトファイルです。\nVideoStudioで「ビデオファイルの作成」を選んで動画ファイルにしてください ","プロジェクトファイル エラー",  :ok)
+	       elsif ext_name == ".nvp2" then
+	         puts msgbox("これはプロジェクトファイルです。\n動画ファイルにしてください ","プロジェクトファイル エラー",  :ok)
+	       elsif ext_name == ".nmm" then
+	         puts msgbox("これはプロジェクトファイルです。\n動画ファイルにしてください ","プロジェクトファイル エラー",  :ok)
 	       end
 	   end
    end
@@ -245,7 +248,7 @@ module MyForm
    end
 
    def cntl1_btn2_clicked
-       inaudio = SimpleDialog.select_file(title = "音声ファイルを選択してください", filter = ["音声ファイル(*.wav;*.mp3)","*.wav;*.mp3"])
+       inaudio = SimpleDialog.select_file(title = "音声ファイルを選択してください", filter = ["音声ファイル(*.wav;*.mp3;*.m4a;*.aac)","*.wav;*.mp3;*.m4a;*.aac"])
        inaudio
        unless inaudio == nil then
           inaudio.each do |line|
@@ -256,9 +259,10 @@ module MyForm
        end
    end
 
-   def cntl1_chk1_clicked
+   def chk1_clicked
     if File.exist?(@file1) then 
       a=open(@file1).read
+       open( @file1, "w"){|f| f.write("false")}
     end
     if a == "true" then 
        open( @file1, "w"){|f| f.write("false")}
@@ -267,39 +271,35 @@ module MyForm
      end
    end
   
-   def cntl1_rdb1_clicked
+   def rdb1_clicked
      open( @file2 , "w"){|f| f.write("premium")}
    end
 
-   def cntl1_rdb2_clicked
+   def rdb2_clicked
      open( @file2 , "w"){|f| f.write("premiummovie")}
    end
 
-   def cntl1_rdb3_clicked
+   def rdb3_clicked
      open( @file2 , "w"){|f| f.write("normalmovie")}
    end
 
-   def cntl1_rdb4_clicked
+   def rdb4_clicked
      open( @file2 , "w"){|f| f.write("normalaudio")}
    end
 
-   def cntl1_rdb5_clicked
+   def rdb5_clicked
      open( @file2 , "w"){|f| f.write("economymovie")}
    end
 
-   def cntl1_rdb6_clicked
+   def rdb6_clicked
      open( @file2 , "w"){|f| f.write("economyaudio")}
    end
 
-   def cntl1_btn100_clicked
-	if not $movie == nil then
-		VRLocalScreen.showForm(MyForm2,100,100,800,490)
-	else
-		puts msgbox("エンコードしたいファイルを選択してください", "ファイルを選択してください", :ok)
-	end
+   def rdb7_clicked
+     open( @file2 , "w"){|f| f.write("youtube")}
    end
 
-   def cntl1_btn101_clicked
+   def btn101_clicked
 	if not $movie == nil then
 		$runfile = 'start tool\harurenkon.bat'
 #		$runfile += " "+"\""+$movie+"\""
@@ -317,5 +317,5 @@ module MyForm
    end
 end
 
-VRLocalScreen.showForm(MyForm,100,100,800,510)
+VRLocalScreen.showForm(MyForm,100,100,800,590)
 VRLocalScreen.messageloop
